@@ -5,9 +5,14 @@ url = "https://en.wikipedia.org/wiki/Artificial_intelligence"
 
 content = get_page_text(url)
 
+index, chunks = create_vector_store(
+    content
+)
+
 answer = ask_gemini(
-    content,
-    "What is artificial intelligence?"
+    question,
+    index,
+    chunks
 )
 
 print(answer)
