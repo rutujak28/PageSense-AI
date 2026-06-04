@@ -56,9 +56,48 @@ st.markdown("""
 div[data-baseweb="select"] {
     border-radius: 12px;
 }
+footer {
+    visibility: hidden;
+}
+
+#MainMenu {
+    visibility: hidden;
+}
+
+header {
+    visibility: hidden;
+}
 
 </style>
 """, unsafe_allow_html=True)
+
+with st.sidebar:
+
+    st.markdown("#  PageSense AI")
+
+    st.markdown("---")
+
+    st.markdown("""
+    ###  About
+
+    Transform any webpage into:
+
+    - Notes
+    - Viva Answers
+    - Exam Solutions
+    - Assignments
+
+    ### ⚙️ Tech Stack
+
+    - Gemini
+    - FAISS
+    - Sentence Transformers
+    - Streamlit
+    """)
+
+    st.markdown("---")
+
+    st.success("Ready to Learn ")
 
 # --------------------------------------------------
 # HERO SECTION
@@ -68,7 +107,7 @@ st.markdown("""
 <div style='text-align:center;padding:30px;'>
 
 <h1 style='font-size:48px;margin-bottom:0px;'>
-🚀 PageSense AI
+  PageSense AI
 </h1>
 
 <h3 style='color:#64748B;margin-top:10px;'>
@@ -99,7 +138,7 @@ if "processed_url" not in st.session_state:
 # URL INPUT
 # --------------------------------------------------
 
-st.markdown("### 🌐 Webpage URL")
+st.markdown("###  Webpage URL")
 
 url = st.text_input(
     "",
@@ -110,7 +149,7 @@ url = st.text_input(
 # PROCESS WEBPAGE
 # --------------------------------------------------
 
-if st.button("✨ Analyze Webpage"):
+if st.button(" Analyze Webpage"):
 
     if not url:
         st.error("Please enter a URL first.")
@@ -127,23 +166,15 @@ if st.button("✨ Analyze Webpage"):
                 st.session_state.chunks = chunks
                 st.session_state.processed_url = url
 
-            st.markdown(f"""
-            <div style="
-            padding:15px;
-            border-radius:12px;
-            background:#ECFDF5;
-            border:1px solid #10B981;
-            margin-top:15px;
-            ">
+            st.success(" Webpage Processed Successfully")
 
-            <h4>✅ Webpage Processed Successfully</h4>
+            st.info(f"""
+             Chunks Created: {len(chunks)}
 
-            <p>
-            Source: {url}
-            </p>
+             Source Loaded
 
-            </div>
-            """, unsafe_allow_html=True)
+             Ready for Questions
+            """)
 
         except Exception as e:
             st.error(f"Error: {e}")
@@ -158,7 +189,7 @@ left, right = st.columns([3, 1])
 
 with left:
 
-    st.markdown("### ❓ Ask a Question")
+    st.markdown("###  Ask a Question")
 
     question = st.text_input(
         "",
@@ -167,17 +198,17 @@ with left:
 
 with right:
 
-    st.markdown("### 🎯 Mode")
 
-    mode = st.selectbox(
-        "",
-        [
-            "Normal",
-            "Viva",
-            "Exam",
-            "Assignment",
-            "Notes"
-        ]
+    mode = st.radio(
+         " Study Mode",
+    [
+        "Normal",
+        "Viva",
+        "Exam",
+        "Assignment",
+        "Notes"
+    ],
+    horizontal=True
     )
 
 # --------------------------------------------------
@@ -199,15 +230,41 @@ if mode == "Assignment":
 # QUICK ACTIONS
 # --------------------------------------------------
 
-st.markdown("### ✨ Quick Actions")
+st.markdown("###  Quick Actions")
 
-col1, col2 = st.columns(2)
+col1, col2, col3 = st.columns(3)
 
 with col1:
-    summarize = st.button("📄 Summarize")
+    summarize = st.button(" Summary")
 
 with col2:
-    keypoints = st.button("⭐ Key Points")
+    keypoints = st.button(" Key Points")
+
+with col3:
+    exam_topics = st.button(" Exam Topics")
+if exam_topics:
+
+      if st.session_state.index is None:
+        st.error("Please click Analyze Webpage first.")
+
+      else:
+        try:
+
+            with st.spinner("Generating exam topics..."):
+
+                answer = ask_gemini(
+                    "Generate important exam topics from this webpage.",
+                    st.session_state.index,
+                    st.session_state.chunks,
+                    mode,
+                    word_limit
+                )
+
+            st.markdown("##  Important Exam Topics")
+            st.write(answer)
+
+        except Exception as e:
+            st.error(f"Error: {e}")
 
 # --------------------------------------------------
 # SUMMARIZE
@@ -231,14 +288,14 @@ if summarize:
                     word_limit
                 )
 
-            st.markdown("## 📄 Summary")
+            st.markdown("##  Summary")
             st.write(answer)
 
         except Exception as e:
 
             if "429" in str(e):
                 st.error(
-                    "🚫 Gemini API limit reached. Please try again later."
+                    " Gemini API limit reached. Please try again later."
                 )
             else:
                 st.error(f"Error: {e}")
@@ -265,14 +322,14 @@ if keypoints:
                     word_limit
                 )
 
-            st.markdown("## ⭐ Key Points")
+            st.markdown("## Key Points")
             st.write(answer)
 
         except Exception as e:
 
             if "429" in str(e):
                 st.error(
-                    "🚫 Gemini API limit reached. Please try again later."
+                    "Gemini API limit reached. Please try again later."
                 )
             else:
                 st.error(f"Error: {e}")
@@ -281,7 +338,7 @@ if keypoints:
 # ASK AI
 # --------------------------------------------------
 
-if st.button("🚀 Ask PageSense AI"):
+if st.button(" Ask PageSense AI"):
 
     if not url:
         st.error("Please enter a URL first.")
@@ -305,14 +362,14 @@ if st.button("🚀 Ask PageSense AI"):
                     word_limit
                 )
 
-            st.markdown("## 🤖 Answer")
+            st.markdown("## Answer")
             st.write(answer)
 
         except Exception as e:
 
             if "429" in str(e):
                 st.error(
-                    "🚫 Gemini API limit reached. Please try again later."
+                    " Gemini API limit reached. Please try again later."
                 )
             else:
                 st.error(f"Error: {e}")
