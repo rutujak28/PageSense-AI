@@ -6,7 +6,7 @@ embedding_model = SentenceTransformer(
     "all-MiniLM-L6-v2"
 )
 
-def chunk_text(text, chunk_size=500):
+def chunk_text(text, chunk_size=1000):
 
     chunks = []
 
